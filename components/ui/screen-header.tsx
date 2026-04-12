@@ -1,3 +1,4 @@
+import { Colors, Spacing } from '@/constants/theme';
 import { StyleSheet, Text, View } from 'react-native';
 
 type Props = {
@@ -16,15 +17,15 @@ export default function ScreenHeader({ title, subtitle }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   title: {
-    color: '#111827',
+    color: Colors.light.text,
     fontSize: 28,
     fontWeight: '700',
   },
   subtitle: {
-    color: '#6B7280',
+    color: Colors.light.mutedText,
     fontSize: 14,
     marginTop: 4,
   },

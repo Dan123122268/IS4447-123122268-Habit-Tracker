@@ -1,3 +1,4 @@
+import { Colors, Radius, Spacing } from '@/constants/theme';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 type Props = {
@@ -24,21 +25,21 @@ export default function FormField({ label, value, onChangeText, placeholder }: P
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 12,
+    marginBottom: Spacing.md,
   },
   label: {
-    color: '#334155',
+    color: Colors.light.mutedText,
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
+    backgroundColor: Colors.light.surface,
+    borderColor: Colors.light.border,
+    borderRadius: Radius.lg,
     borderWidth: 1,
     fontSize: 15,
-    paddingHorizontal: 12,
+    paddingHorizontal: Spacing.md,
     paddingVertical: 10,
   },
 });

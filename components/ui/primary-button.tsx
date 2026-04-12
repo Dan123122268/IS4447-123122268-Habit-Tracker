@@ -1,3 +1,4 @@
+import { Colors, Radius, Spacing } from '@/constants/theme';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 type Props = {
@@ -43,14 +44,14 @@ export default function PrimaryButton({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 10,
+    backgroundColor: Colors.light.tint,
+    borderRadius: Radius.lg,
     paddingHorizontal: 14,
     paddingVertical: 11,
   },
   secondary: {
-    backgroundColor: '#F8FAFC',
-    borderColor: '#94A3B8',
+    backgroundColor: Colors.light.background,
+    borderColor: Colors.light.border,
     borderWidth: 1,
   },
   danger: {
@@ -60,9 +61,9 @@ const styles = StyleSheet.create({
   },
   compact: {
     alignSelf: 'flex-start',
-    marginTop: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    marginTop: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   pressed: {
     opacity: 0.85,
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   secondaryLabel: {
-    color: '#0F172A',
+    color: Colors.light.text,
   },
   dangerLabel: {
     color: '#7F1D1D',
