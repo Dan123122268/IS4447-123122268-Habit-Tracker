@@ -68,13 +68,6 @@ sqlite.execSync(`
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 
-  CREATE TABLE IF NOT EXISTS students (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    major TEXT NOT NULL,
-    year TEXT NOT NULL,
-    count INTEGER NOT NULL DEFAULT 0
-  );
 `);
 
 export const db = drizzle(sqlite);

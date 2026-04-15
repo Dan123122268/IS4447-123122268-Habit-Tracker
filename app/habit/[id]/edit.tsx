@@ -5,38 +5,49 @@ import { Colors, Radius, Spacing } from '@/constants/theme';
 import { useTrackify } from '@/context/TrackifyContext';
 import { db } from '@/db/client';
 import { habits as habitsTable, targets as targetsTable } from '@/db/schema';
-import { todayIso } from '@/utils/date';
-import { useRouter } from 'expo-router';
+import { eq } from 'drizzle-orm';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function AddHabit() {
+export default function EditHabit() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { activeUser, categories, refreshData } = useTrackify();
+  const { categories, habits, targets, refreshData } = useTrackify();
+  const habitId = Number(id);
+  const habit = habits.find((item) => item.id === habitId);
+  const weeklyTarget = targets.find(
+    (target) => target.habitId === habitId && target.period === 'weekly'
+  );
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
-  const [weeklyTarget, setWeeklyTarget] = useState('4');
+  const [weeklyTargetValue, setWeeklyTargetValue] = useState('1');
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (categoryId === null && categories[0]) {
-      setCategoryId(categories[0].id);
-    }
-  }, [categories, categoryId]);
+    if (!habit) return;
 
-  const saveHabit = async () => {
+    setName(habit.name);
+    setNotes(habit.notes ?? '');
+    setCategoryId(habit.categoryId);
+    setWeeklyTargetValue(String(weeklyTarget?.targetValue ?? 1));
+  }, [habit, weeklyTarget]);
+
+  if (!habit) return null;
+
+  const saveChanges = async () => {
     const trimmedName = name.trim();
-    const targetValue = Number(weeklyTarget);
-
-    if (!activeUser || categoryId === null) {
-      setError('Create a category before adding a habit.');
-      return;
-    }
+    const targetValue = Number(weeklyTargetValue);
 
     if (trimmedName.length === 0) {
       setError('Habit name is required.');
+      return;
+    }
+
+    if (categoryId === null) {
+      setError('Choose a category.');
       return;
     }
 
@@ -45,27 +56,21 @@ export default function AddHabit() {
       return;
     }
 
-    const insertedHabit = await db
-      .insert(habitsTable)
-      .values({
-        userId: activeUser.id,
-        categoryId,
+    await db
+      .update(habitsTable)
+      .set({
         name: trimmedName,
         notes: notes.trim() || null,
-        metricType: 'count',
-        createdAt: todayIso(),
-        isArchived: false,
+        categoryId,
       })
-      .returning();
+      .where(eq(habitsTable.id, habit.id));
 
-    await db.insert(targetsTable).values({
-      userId: activeUser.id,
-      habitId: insertedHabit[0].id,
-      categoryId: null,
-      period: 'weekly',
-      targetValue,
-      startsOn: todayIso(),
-    });
+    if (weeklyTarget) {
+      await db
+        .update(targetsTable)
+        .set({ targetValue })
+        .where(eq(targetsTable.id, weeklyTarget.id));
+    }
 
     await refreshData();
     router.back();
@@ -74,26 +79,15 @@ export default function AddHabit() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <ScreenHeader title="Add Habit" subtitle="Create a trackable routine." />
+        <ScreenHeader title="Edit Habit" subtitle={`Update ${habit.name}`} />
 
         <View style={styles.form}>
-          <FormField
-            label="Habit name"
-            value={name}
-            onChangeText={setName}
-            placeholder="e.g. Morning run"
-          />
-          <FormField
-            label="Notes"
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="Optional details"
-          />
+          <FormField label="Habit name" value={name} onChangeText={setName} />
+          <FormField label="Notes" value={notes} onChangeText={setNotes} />
           <FormField
             label="Weekly target"
-            value={weeklyTarget}
-            onChangeText={setWeeklyTarget}
-            placeholder="4"
+            value={weeklyTargetValue}
+            onChangeText={setWeeklyTargetValue}
           />
 
           <Text style={styles.sectionLabel}>Category</Text>
@@ -131,7 +125,7 @@ export default function AddHabit() {
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-        <PrimaryButton label="Save Habit" onPress={saveHabit} />
+        <PrimaryButton label="Save Changes" onPress={saveChanges} />
         <View style={styles.buttonSpacing}>
           <PrimaryButton label="Cancel" variant="secondary" onPress={() => router.back()} />
         </View>

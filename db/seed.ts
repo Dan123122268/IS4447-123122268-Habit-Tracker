@@ -4,7 +4,6 @@ import {
   habitLogs,
   habits,
   settings,
-  students,
   targets,
   users,
 } from './schema';
@@ -87,18 +86,4 @@ export async function seedTrackifyIfEmpty() {
   await db.insert(habitLogs).values(seedHabitLogs);
   await db.insert(targets).values(seedTargets);
   await db.insert(settings).values(seedSettings);
-}
-
-export async function seedStudentsIfEmpty() {
-  const existing = await db.select().from(students);
-
-  if (existing.length > 0) {
-    return;
-  }
-
-  await db.insert(students).values([
-    { name: 'Emilia', major: 'Computer Science', year: '3', count: 0 },
-    { name: 'Jackie', major: 'Business', year: '2', count: 0 },
-    { name: 'Sammy', major: 'Engineering', year: '4', count: 0 },
-  ]);
 }

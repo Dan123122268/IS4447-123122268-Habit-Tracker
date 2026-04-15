@@ -66,11 +66,3 @@ export const settings = sqliteTable('settings', {
   key: text('key').notNull(),
   value: text('value').notNull(),
 });
-
-export const students = sqliteTable('students', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  name: text('name').notNull(),
-  major: text('major').notNull(),
-  year: text('year').notNull(),
-  count: integer('count').notNull().default(0),
-});
