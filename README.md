@@ -1,50 +1,54 @@
-# Welcome to your Expo app 👋
+# Trackify
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Trackify is a React Native and Expo habit tracker for IS4447 student `123122268`.
+It uses local SQLite persistence through Drizzle ORM.
 
-## Get started
+## Current State
 
-1. Install dependencies
+- Habit list/dashboard with search and category filtering
+- Add, edit, delete, and log habits
+- Categories, habits, logs, targets, users, and settings schema
+- Category and target management screens
+- Insights screen with daily, weekly, and monthly chart views
+- Streak and top-habit summaries from stored logs
+- Seed data for all core tables
+- Reusable UI components for forms, buttons, headers, tags, cards, and progress bars
+- Jest tests for seeding, reusable form input, and seeded habit list rendering
 
-   ```bash
-   npm install
-   ```
+## Roadmap
 
-2. Start the app
+1. Categories and targets
+   - Create and edit categories with colours/icons
+   - Define weekly/monthly targets per habit or category
+   - Show progress and remaining amounts
 
-   ```bash
-   npx expo start
-   ```
+2. Insights and charts
+   - Daily, weekly, and monthly summaries
+   - Simple bar or pie chart from stored habit logs
+   - Streak calculation from completed logs
 
-In the output, you'll find options to open the app in a
+3. Local account flow
+   - Register, login, logout, and delete profile
+   - Keep authentication local-only in SQLite
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+4. Advanced features
+   - Light/dark mode toggle with persisted setting
+   - CSV export of habit logs
+   - Local reminders for habit logging
+   - Optional public API integration
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+5. Delivery polish
+   - App icon/branding update
+   - Expo publish link
+   - Demo-video checklist
+   - Short report notes for accessibility, architecture, and AI usage
 
-## Get a fresh project
-
-When you're ready, run:
+## Development
 
 ```bash
-npm run reset-project
+npm install
+npm test
+npm run lint
+npx tsc --noEmit
+npx expo start
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

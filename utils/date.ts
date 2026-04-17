@@ -16,9 +16,26 @@ export function isCurrentWeek(dateIso: string) {
   return dateIso >= startOfWeekIso() && dateIso <= todayIso();
 }
 
+export function isCurrentMonth(dateIso: string) {
+  return dateIso.slice(0, 7) === todayIso().slice(0, 7);
+}
+
 export function totalForCurrentWeek(habitId: number, logs: HabitLog[]) {
   return logs
     .filter((log) => log.habitId === habitId && isCurrentWeek(log.date))
+    .reduce((total, log) => total + log.value, 0);
+}
+
+export function totalForPeriod(habitIds: number[], logs: HabitLog[], period: string) {
+  return logs
+    .filter((log) => {
+      const inScope = habitIds.includes(log.habitId);
+      const inPeriod = period === 'monthly'
+        ? isCurrentMonth(log.date)
+        : isCurrentWeek(log.date);
+
+      return inScope && inPeriod;
+    })
     .reduce((total, log) => total + log.value, 0);
 }
 
