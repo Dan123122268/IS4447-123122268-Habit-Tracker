@@ -7,11 +7,12 @@ import {
   targets,
   users,
 } from './schema';
+import { hashPassword } from '../utils/auth';
 
 const seedUser = {
   id: 1,
   username: 'demo',
-  passwordHash: 'local-demo-password',
+  passwordHash: hashPassword('demo', 'password'),
   createdAt: '2026-04-08',
 };
 
@@ -71,6 +72,7 @@ const seedTargets = [
 
 const seedSettings = [
   { id: 1, userId: 1, key: 'theme', value: 'system' },
+  { id: 2, userId: 1, key: 'active_user_id', value: '1' },
 ];
 
 export async function seedTrackifyIfEmpty() {

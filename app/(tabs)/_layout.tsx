@@ -19,6 +19,10 @@ export default function TabLayout() {
         name="insights"
         options={{ title: 'Insights' }}
       />
+      <Tabs.Screen
+        name="profile"
+        options={{ title: 'Profile' }}
+      />
     </Tabs>
   );
 }

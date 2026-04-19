@@ -11,6 +11,7 @@ It uses local SQLite persistence through Drizzle ORM.
 - Category and target management screens
 - Insights screen with daily, weekly, and monthly chart views
 - Streak and top-habit summaries from stored logs
+- Local account flow with register, login, logout, and delete profile
 - Seed data for all core tables
 - Reusable UI components for forms, buttons, headers, tags, cards, and progress bars
 - Jest tests for seeding, reusable form input, and seeded habit list rendering
@@ -27,17 +28,13 @@ It uses local SQLite persistence through Drizzle ORM.
    - Simple bar or pie chart from stored habit logs
    - Streak calculation from completed logs
 
-3. Local account flow
-   - Register, login, logout, and delete profile
-   - Keep authentication local-only in SQLite
-
-4. Advanced features
+3. Advanced features
    - Light/dark mode toggle with persisted setting
    - CSV export of habit logs
    - Local reminders for habit logging
    - Optional public API integration
 
-5. Delivery polish
+4. Delivery polish
    - App icon/branding update
    - Expo publish link
    - Demo-video checklist
