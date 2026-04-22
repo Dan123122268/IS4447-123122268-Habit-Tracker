@@ -1,7 +1,9 @@
 import ProgressBar from '@/components/ui/progress-bar';
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useThemeColors } from '@/context/ThemeContext';
 import { Category, Habit, HabitLog, Target } from '@/types/trackify';
 import { totalForCurrentWeek } from '@/utils/date';
+import { Ionicons } from '@expo/vector-icons';
 import { Href, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -12,12 +14,25 @@ type Props = {
   target?: Target;
 };
 
+const legacyIconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
+  activity: 'fitness-outline',
+  book: 'book-outline',
+  'book-open': 'book-outline',
+  heart: 'heart-outline',
+  moon: 'moon-outline',
+  target: 'radio-button-on-outline',
+};
+
 export default function HabitCard({ habit, category, logs, target }: Props) {
+  const colors = useThemeColors();
   const router = useRouter();
   const weeklyTotal = totalForCurrentWeek(habit.id, logs);
   const targetValue = target?.targetValue ?? 0;
   const progress = targetValue > 0 ? weeklyTotal / targetValue : 0;
   const categoryColour = category?.colour ?? Colors.light.tint;
+  const iconName =
+    legacyIconMap[category?.icon ?? ''] ??
+    ((category?.icon ?? 'checkmark-circle-outline') as keyof typeof Ionicons.glyphMap);
 
   return (
     <Pressable
@@ -29,23 +44,41 @@ export default function HabitCard({ habit, category, logs, target }: Props) {
           params: { id: habit.id.toString() },
         } as unknown) as Href)
       }
-      style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
+      style={({ pressed }) => [
+        styles.card,
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+        },
+        pressed ? styles.cardPressed : null,
+      ]}
     >
       <View style={styles.header}>
         <View style={[styles.iconBadge, { backgroundColor: `${categoryColour}22` }]}>
-          <Text style={[styles.iconText, { color: categoryColour }]}>
-            {(category?.icon ?? habit.name).slice(0, 1).toUpperCase()}
-          </Text>
+          <Ionicons name={iconName} size={21} color={categoryColour} />
         </View>
         <View style={styles.titleBlock}>
-          <Text style={styles.name}>{habit.name}</Text>
-          <Text style={styles.category}>{category?.name ?? 'No category'}</Text>
+          <Text style={[styles.name, { color: colors.text }]}>{habit.name}</Text>
+          <Text style={[styles.category, { color: colors.mutedText }]}>
+            {category?.name ?? 'No category'}
+          </Text>
         </View>
+        <Text
+          style={[
+            styles.statusPill,
+            {
+              backgroundColor: colors.surfaceStrong,
+              color: categoryColour,
+            },
+          ]}
+        >
+          {target && weeklyTotal >= target.targetValue ? 'Done' : 'Active'}
+        </Text>
       </View>
 
       <View style={styles.progressHeader}>
-        <Text style={styles.progressLabel}>This week</Text>
-        <Text style={styles.progressValue}>
+        <Text style={[styles.progressLabel, { color: colors.mutedText }]}>This week</Text>
+        <Text style={[styles.progressValue, { color: colors.text }]}>
           {target ? `${weeklyTotal}/${target.targetValue}` : `${weeklyTotal} logged`}
         </Text>
       </View>
@@ -56,12 +89,11 @@ export default function HabitCard({ habit, category, logs, target }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.light.surface,
-    borderColor: '#E2E8F0',
     borderRadius: Radius.lg,
     borderWidth: 1,
     marginBottom: Spacing.md,
     padding: Spacing.lg,
+    elevation: 2,
   },
   cardPressed: {
     opacity: 0.88,
@@ -78,22 +110,24 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
     width: 40,
   },
-  iconText: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
   titleBlock: {
     flex: 1,
   },
   name: {
-    color: Colors.light.text,
     fontSize: 18,
     fontWeight: '700',
   },
   category: {
-    color: Colors.light.mutedText,
     fontSize: 13,
     marginTop: 2,
+  },
+  statusPill: {
+    borderRadius: Radius.pill,
+    fontSize: 12,
+    fontWeight: '800',
+    overflow: 'hidden',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -102,12 +136,11 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   progressLabel: {
-    color: Colors.light.mutedText,
     fontSize: 13,
   },
   progressValue: {
-    color: Colors.light.text,
     fontSize: 13,
     fontWeight: '700',
   },
 });
+

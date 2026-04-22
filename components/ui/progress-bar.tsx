@@ -1,4 +1,5 @@
 import { Colors, Radius } from '@/constants/theme';
+import { useThemeColors } from '@/context/ThemeContext';
 import { DimensionValue, StyleSheet, View } from 'react-native';
 
 type Props = {
@@ -7,10 +8,14 @@ type Props = {
 };
 
 export default function ProgressBar({ progress, colour = Colors.light.tint }: Props) {
+  const colors = useThemeColors();
   const width = `${Math.min(Math.max(progress, 0), 1) * 100}%` as DimensionValue;
 
   return (
-    <View style={styles.track} accessibilityRole="progressbar">
+    <View
+      style={[styles.track, { backgroundColor: colors.surfaceStrong }]}
+      accessibilityRole="progressbar"
+    >
       <View style={[styles.fill, { backgroundColor: colour, width }]} />
     </View>
   );
@@ -18,7 +23,6 @@ export default function ProgressBar({ progress, colour = Colors.light.tint }: Pr
 
 const styles = StyleSheet.create({
   track: {
-    backgroundColor: '#E2E8F0',
     borderRadius: Radius.pill,
     height: 8,
     overflow: 'hidden',
@@ -28,3 +32,4 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+

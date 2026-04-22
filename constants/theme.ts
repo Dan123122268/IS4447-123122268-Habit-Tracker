@@ -17,6 +17,7 @@ export const Colors = {
     mutedText: '#64748B',
     background: '#F8FAFC',
     surface: '#FFFFFF',
+    surfaceStrong: '#F1F5F9',
     surfaceAlt: '#ECFDF5',
     border: '#CBD5E1',
     tint: tintColorLight,
@@ -32,6 +33,7 @@ export const Colors = {
     mutedText: '#CBD5E1',
     background: '#0F172A',
     surface: '#1E293B',
+    surfaceStrong: '#0B1220',
     surfaceAlt: '#134E4A',
     border: '#334155',
     tint: tintColorDark,
@@ -56,8 +58,17 @@ export const Spacing = {
 export const Radius = {
   sm: 6,
   md: 8,
-  lg: 10,
+  lg: 8,
   pill: 999,
+};
+
+export const Palette = {
+  teal: { name: 'Teal', value: '#0F766E' },
+  blue: { name: 'Blue', value: '#2563EB' },
+  orange: { name: 'Orange', value: '#C2410C' },
+  violet: { name: 'Violet', value: '#7C3AED' },
+  rose: { name: 'Rose', value: '#BE123C' },
+  green: { name: 'Green', value: '#15803D' },
 };
 
 export const Fonts = Platform.select({

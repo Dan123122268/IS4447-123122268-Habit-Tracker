@@ -1,4 +1,5 @@
-import { Colors, Radius, Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
+import { useThemeColors } from '@/context/ThemeContext';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 type Props = {
@@ -16,16 +17,26 @@ export default function FormField({
   placeholder,
   secureTextEntry = false,
 }: Props) {
+  const colors = useThemeColors();
+
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.mutedText }]}>{label}</Text>
       <TextInput
         accessibilityLabel={label}
         placeholder={placeholder ?? label}
+        placeholderTextColor={colors.mutedText}
         secureTextEntry={secureTextEntry}
         value={value}
         onChangeText={onChangeText}
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.text,
+          },
+        ]}
       />
     </View>
   );
@@ -36,14 +47,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   label: {
-    color: Colors.light.mutedText,
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
   },
   input: {
-    backgroundColor: Colors.light.surface,
-    borderColor: Colors.light.border,
     borderRadius: Radius.lg,
     borderWidth: 1,
     fontSize: 15,
@@ -51,3 +59,4 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 });
+

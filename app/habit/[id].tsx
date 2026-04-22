@@ -8,16 +8,19 @@ import { Colors, Spacing } from '@/constants/theme';
 import { useTrackify } from '@/context/TrackifyContext';
 import { db } from '@/db/client';
 import { habitLogs as habitLogsTable, habits as habitsTable } from '@/db/schema';
+import { HabitLog } from '@/types/trackify';
 import { todayIso, totalForCurrentWeek } from '@/utils/date';
 import { eq } from 'drizzle-orm';
 import { Href, useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HabitDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { activeUser, categories, habits, logs, targets, refreshData } = useTrackify();
+  const { activeUser, categories, colors, habits, logs, targets, refreshData } = useTrackify();
+  const [editingLog, setEditingLog] = useState<HabitLog | null>(null);
   const habitId = Number(id);
   const habit = habits.find((item) => item.id === habitId);
 
@@ -48,6 +51,21 @@ export default function HabitDetail() {
   const saveLog = async (input: { date: string; value: number; notes: string | null }) => {
     if (!activeUser) return;
 
+    if (editingLog) {
+      await db
+        .update(habitLogsTable)
+        .set({
+          date: input.date,
+          value: input.value,
+          notes: input.notes,
+        })
+        .where(eq(habitLogsTable.id, editingLog.id));
+
+      setEditingLog(null);
+      await refreshData();
+      return;
+    }
+
     await db.insert(habitLogsTable).values({
       habitId: habit.id,
       userId: activeUser.id,
@@ -61,6 +79,10 @@ export default function HabitDetail() {
   };
 
   const deleteLog = async (logId: number) => {
+    if (editingLog?.id === logId) {
+      setEditingLog(null);
+    }
+
     await db.delete(habitLogsTable).where(eq(habitLogsTable.id, logId));
     await refreshData();
   };
@@ -72,7 +94,7 @@ export default function HabitDetail() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ScreenHeader title={habit.name} subtitle="Habit details" />
 
@@ -82,11 +104,11 @@ export default function HabitDetail() {
         </View>
 
         <SectionCard>
-          <Text style={styles.summaryLabel}>Weekly progress</Text>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryLabel, { color: colors.mutedText }]}>Weekly progress</Text>
+          <Text style={[styles.summaryValue, { color: colors.text }]}>
             {weeklyTarget ? `${weeklyTotal}/${weeklyTarget.targetValue}` : weeklyTotal}
           </Text>
-          <Text style={styles.summaryHint}>
+          <Text style={[styles.summaryHint, { color: colors.mutedText }]}>
             {weeklyTarget
               ? remaining === 0
                 ? 'Target reached or exceeded'
@@ -95,7 +117,7 @@ export default function HabitDetail() {
           </Text>
         </SectionCard>
 
-        {habit.notes ? <Text style={styles.notes}>{habit.notes}</Text> : null}
+        {habit.notes ? <Text style={[styles.notes, { color: colors.text }]}>{habit.notes}</Text> : null}
 
         <PrimaryButton label="Log Today" onPress={logToday} />
         <View style={styles.buttonSpacing}>
@@ -112,10 +134,14 @@ export default function HabitDetail() {
         </View>
 
         <View style={styles.formSpacing}>
-          <HabitLogForm onSave={saveLog} />
+          <HabitLogForm
+            initialLog={editingLog}
+            onCancel={() => setEditingLog(null)}
+            onSave={saveLog}
+          />
         </View>
 
-        <HabitLogList logs={habitLogs} onDelete={deleteLog} />
+        <HabitLogList logs={habitLogs} onEdit={setEditingLog} onDelete={deleteLog} />
 
         <View style={styles.buttonSpacing}>
           <PrimaryButton label="Delete Habit" variant="danger" onPress={deleteHabit} />
@@ -127,9 +153,12 @@ export default function HabitDetail() {
 
 const styles = StyleSheet.create({
   safeArea: {
+    alignSelf: 'center',
     backgroundColor: Colors.light.background,
     flex: 1,
+    maxWidth: 780,
     padding: Spacing.xl,
+    width: '100%',
   },
   content: {
     paddingBottom: Spacing.xxl,
@@ -140,22 +169,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   summaryLabel: {
-    color: Colors.light.mutedText,
     fontSize: 13,
     fontWeight: '600',
   },
   summaryValue: {
-    color: Colors.light.text,
     fontSize: 34,
     fontWeight: '800',
     marginTop: Spacing.xs,
   },
   summaryHint: {
-    color: Colors.light.mutedText,
     marginTop: Spacing.xs,
   },
   notes: {
-    color: Colors.light.text,
     fontSize: 15,
     lineHeight: 21,
     marginBottom: Spacing.lg,

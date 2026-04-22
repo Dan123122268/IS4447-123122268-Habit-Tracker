@@ -14,12 +14,21 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function IndexScreen() {
   const router = useRouter();
-  const { categories, habits, logs, targets, isLoading } = useTrackify();
+  const trackify = useTrackify();
+  const {
+    categories,
+    habits,
+    logs,
+    targets,
+    isLoading,
+  } = trackify;
+  const colors = trackify.colors ?? Colors.light;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [dateRange, setDateRange] = useState<DateRangeFilterValue>('all');
@@ -44,7 +53,7 @@ export default function IndexScreen() {
   });
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScreenHeader
         title="Trackify"
         subtitle={`${activeHabits.length} active habits`}
@@ -62,26 +71,38 @@ export default function IndexScreen() {
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="Search habits or categories"
-        style={styles.searchInput}
+        placeholderTextColor={colors.mutedText}
+        style={[
+          styles.searchInput,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            color: colors.text,
+          },
+        ]}
       />
 
-      <ScrollView
-        horizontal
-        contentContainerStyle={styles.filterRow}
-        showsHorizontalScrollIndicator={false}
-      >
+      <View style={styles.filterRow}>
         <Pressable
           accessibilityLabel="Show all categories"
           accessibilityRole="button"
           onPress={() => setSelectedCategoryId(null)}
           style={[
             styles.filterButton,
-            selectedCategoryId === null && styles.filterButtonSelected,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+            },
+            selectedCategoryId === null && {
+              backgroundColor: colors.tint,
+              borderColor: colors.tint,
+            },
           ]}
         >
           <Text
             style={[
               styles.filterButtonText,
+              { color: colors.text },
               selectedCategoryId === null && styles.filterButtonTextSelected,
             ]}
           >
@@ -100,12 +121,17 @@ export default function IndexScreen() {
               onPress={() => setSelectedCategoryId(category.id)}
               style={[
                 styles.filterButton,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                },
                 isSelected && { backgroundColor: category.colour, borderColor: category.colour },
               ]}
             >
               <Text
                 style={[
                   styles.filterButtonText,
+                  { color: colors.text },
                   isSelected && styles.filterButtonTextSelected,
                 ]}
               >
@@ -114,7 +140,7 @@ export default function IndexScreen() {
             </Pressable>
           );
         })}
-      </ScrollView>
+      </View>
 
       <DateRangeFilter value={dateRange} onChange={setDateRange} />
 
@@ -123,9 +149,9 @@ export default function IndexScreen() {
         showsVerticalScrollIndicator={false}
       >
         {isLoading ? (
-          <Text style={styles.emptyText}>Loading habits...</Text>
+          <Text style={[styles.emptyText, { color: colors.mutedText }]}>Loading habits...</Text>
         ) : filteredHabits.length === 0 ? (
-          <Text style={styles.emptyText}>
+          <Text style={[styles.emptyText, { color: colors.mutedText }]}>
             No habits match your search, category, and date filters
           </Text>
         ) : (
@@ -148,18 +174,19 @@ export default function IndexScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
+    alignSelf: 'center',
     backgroundColor: Colors.light.background,
     flex: 1,
+    maxWidth: 780,
     paddingHorizontal: 18,
     paddingTop: 10,
+    width: '100%',
   },
   listContent: {
     paddingBottom: Spacing.xxl,
     paddingTop: Spacing.lg,
   },
   searchInput: {
-    backgroundColor: Colors.light.surface,
-    borderColor: Colors.light.border,
     borderRadius: Radius.lg,
     borderWidth: 1,
     color: Colors.light.text,
@@ -168,23 +195,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   filterRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.sm,
+    minHeight: 44,
     paddingTop: Spacing.md,
   },
   filterButton: {
-    backgroundColor: Colors.light.surface,
-    borderColor: Colors.light.border,
     borderRadius: Radius.pill,
     borderWidth: 1,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
   },
-  filterButtonSelected: {
-    backgroundColor: Colors.light.text,
-    borderColor: Colors.light.text,
-  },
   filterButtonText: {
-    color: Colors.light.text,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -192,7 +215,6 @@ const styles = StyleSheet.create({
     color: Colors.light.surface,
   },
   emptyText: {
-    color: Colors.light.mutedText,
     fontSize: 16,
     paddingTop: Spacing.sm,
     textAlign: 'center',

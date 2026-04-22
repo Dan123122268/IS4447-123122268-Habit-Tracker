@@ -96,13 +96,13 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ScreenHeader title="Profile" subtitle="Local-only account and data controls." />
 
         {!activeUser ? (
           <SectionCard>
-            <Text style={styles.emptyText}>No profile is currently logged in.</Text>
+            <Text style={[styles.emptyText, { color: colors.mutedText }]}>No profile is currently logged in.</Text>
             <View style={styles.buttonSpacing}>
               <PrimaryButton label="Login" onPress={() => router.replace('/login' as Href)} />
             </View>
@@ -110,8 +110,8 @@ export default function ProfileScreen() {
         ) : (
           <>
             <SectionCard>
-              <Text style={styles.username}>{activeUser.username}</Text>
-              <Text style={styles.meta}>Created {activeUser.createdAt}</Text>
+              <Text style={[styles.username, { color: colors.text }]}>{activeUser.username}</Text>
+              <Text style={[styles.meta, { color: colors.mutedText }]}>Created {activeUser.createdAt}</Text>
               <View style={styles.tags}>
                 <InfoTag label="Habits" value={String(habits.length)} />
                 <InfoTag label="Logs" value={String(logs.length)} />
@@ -121,33 +121,17 @@ export default function ProfileScreen() {
             </SectionCard>
 
             <SectionCard>
-              <Text style={styles.sectionTitle}>Privacy</Text>
-              <Text style={styles.meta}>
-                Trackify stores habit data locally on this device using SQLite. No backend
-                account, API secret, or remote database is used.
-              </Text>
-            </SectionCard>
-
-            <SectionCard>
-              <Text style={styles.sectionTitle}>Data export</Text>
-              <Text style={styles.meta}>
-                Export your stored habit logs as a CSV file that can be saved or shared locally.
-              </Text>
-              {exportMessage ? (
-                <Text style={styles.exportMessage}>{exportMessage}</Text>
-              ) : null}
-              <View style={styles.buttonSpacing}>
-                <PrimaryButton
-                  label={isExporting ? 'Exporting...' : 'Export CSV'}
-                  variant="secondary"
-                  onPress={handleExport}
-                />
+              <View style={styles.themeHeader}>
+                <View>
+                  <Text style={[styles.sectionTitle, { color: colors.text }]}>Appearance</Text>
+                  <Text style={[styles.meta, { color: colors.mutedText }]}>
+                    Current mode: {themeMode}
+                  </Text>
+                </View>
+                <View style={[styles.themePreview, { backgroundColor: colors.background, borderColor: colors.border }]}>
+                  <View style={[styles.themePreviewDot, { backgroundColor: colors.tint }]} />
+                </View>
               </View>
-            </SectionCard>
-
-            <SectionCard>
-              <Text style={styles.sectionTitle}>Theme</Text>
-              <Text style={styles.meta}>Your display preference is stored locally.</Text>
               <View style={styles.choiceRow}>
                 <ChoiceChip
                   label="System"
@@ -169,14 +153,39 @@ export default function ProfileScreen() {
             </SectionCard>
 
             <SectionCard>
-              <Text style={styles.sectionTitle}>Reminders</Text>
-              <Text style={styles.meta}>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Privacy</Text>
+              <Text style={[styles.meta, { color: colors.mutedText }]}>
+                Trackify stores habit data locally on this device using SQLite. No backend
+                account, API secret, or remote database is used.
+              </Text>
+            </SectionCard>
+
+            <SectionCard>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Data export</Text>
+              <Text style={[styles.meta, { color: colors.mutedText }]}>
+                Export your stored habit logs as a CSV file that can be saved or shared locally.
+              </Text>
+              {exportMessage ? (
+                <Text style={[styles.exportMessage, { color: colors.mutedText }]}>{exportMessage}</Text>
+              ) : null}
+              <View style={styles.buttonSpacing}>
+                <PrimaryButton
+                  label={isExporting ? 'Exporting...' : 'Export CSV'}
+                  variant="secondary"
+                  onPress={handleExport}
+                />
+              </View>
+            </SectionCard>
+
+            <SectionCard>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Reminders</Text>
+              <Text style={[styles.meta, { color: colors.mutedText }]}>
                 {reminderId
                   ? `Daily habit reminder is enabled for ${reminderTime}.`
                   : 'Schedule a local daily reminder to log habit progress.'}
               </Text>
               {reminderMessage ? (
-                <Text style={styles.exportMessage}>{reminderMessage}</Text>
+                <Text style={[styles.exportMessage, { color: colors.mutedText }]}>{reminderMessage}</Text>
               ) : null}
               <View style={styles.buttonSpacing}>
                 <PrimaryButton
@@ -210,9 +219,12 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
+    alignSelf: 'center',
     backgroundColor: Colors.light.background,
     flex: 1,
+    maxWidth: 780,
     padding: Spacing.xl,
+    width: '100%',
   },
   content: {
     paddingBottom: Spacing.xxl,
@@ -240,17 +252,32 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   sectionTitle: {
-    color: Colors.light.text,
     fontSize: 18,
     fontWeight: '800',
   },
   emptyText: {
-    color: Colors.light.mutedText,
   },
   exportMessage: {
-    color: Colors.light.mutedText,
     fontSize: 12,
     marginTop: Spacing.md,
+  },
+  themeHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  themePreview: {
+    alignItems: 'center',
+    borderRadius: 18,
+    borderWidth: 1,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  themePreviewDot: {
+    borderRadius: 8,
+    height: 16,
+    width: 16,
   },
   buttonSpacing: {
     marginTop: Spacing.sm,

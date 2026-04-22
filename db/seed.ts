@@ -17,9 +17,9 @@ const seedUser = {
 };
 
 const seedCategories = [
-  { id: 1, userId: 1, name: 'Fitness', colour: '#0F766E', icon: 'activity' },
-  { id: 2, userId: 1, name: 'Learning', colour: '#2563EB', icon: 'book-open' },
-  { id: 3, userId: 1, name: 'Wellbeing', colour: '#C2410C', icon: 'heart' },
+  { id: 1, userId: 1, name: 'Fitness', colour: '#0F766E', icon: 'fitness-outline' },
+  { id: 2, userId: 1, name: 'Learning', colour: '#2563EB', icon: 'book-outline' },
+  { id: 3, userId: 1, name: 'Wellbeing', colour: '#C2410C', icon: 'heart-outline' },
 ];
 
 const seedHabits = [

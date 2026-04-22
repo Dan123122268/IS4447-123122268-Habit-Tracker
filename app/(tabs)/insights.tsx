@@ -22,7 +22,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 type ViewMode = 'daily' | 'weekly' | 'monthly';
 
 export default function InsightsScreen() {
-  const { categories, habits, logs, targets } = useTrackify();
+  const { categories, colors, habits, logs, targets } = useTrackify();
   const [viewMode, setViewMode] = useState<ViewMode>('daily');
   const activeHabits = habits.filter((habit) => !habit.isArchived);
   const topHabit = topHabitByVolume(activeHabits, logs);
@@ -42,7 +42,7 @@ export default function InsightsScreen() {
     .sort((a, b) => b.streak - a.streak);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ScreenHeader
           title="Insights"
@@ -53,20 +53,22 @@ export default function InsightsScreen() {
 
         <View style={styles.summaryGrid}>
           <SectionCard>
-            <Text style={styles.metricValue}>{totalLogged(logs)}</Text>
-            <Text style={styles.metricLabel}>total logged</Text>
+            <Text style={[styles.metricValue, { color: colors.text }]}>{totalLogged(logs)}</Text>
+            <Text style={[styles.metricLabel, { color: colors.mutedText }]}>total logged</Text>
           </SectionCard>
           <SectionCard>
-            <Text style={styles.metricValue}>{completedLogCount(logs)}</Text>
-            <Text style={styles.metricLabel}>completed entries</Text>
+            <Text style={[styles.metricValue, { color: colors.text }]}>{completedLogCount(logs)}</Text>
+            <Text style={[styles.metricLabel, { color: colors.mutedText }]}>completed entries</Text>
           </SectionCard>
         </View>
 
         <SectionCard>
           <View style={styles.chartHeader}>
             <View>
-              <Text style={styles.cardTitle}>Activity chart</Text>
-              <Text style={styles.cardHint}>Values are calculated from habit logs.</Text>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>Activity chart</Text>
+              <Text style={[styles.cardHint, { color: colors.mutedText }]}>
+                {viewMode} values calculated from stored logs.
+              </Text>
             </View>
           </View>
           <View style={styles.chipRow}>
@@ -87,27 +89,35 @@ export default function InsightsScreen() {
             />
           </View>
           {logs.length === 0 ? (
-            <Text style={styles.emptyText}>Log a habit to generate chart data.</Text>
+            <Text style={[styles.emptyText, { color: colors.mutedText }]}>
+              Log a habit to generate chart data.
+            </Text>
           ) : (
             <SimpleBarChart data={chartData} />
           )}
         </SectionCard>
 
         <SectionCard>
-          <Text style={styles.cardTitle}>Top habit</Text>
+          <Text style={[styles.cardTitle, { color: colors.text }]}>Top habit</Text>
           {topHabit && topHabit.total > 0 ? (
             <>
-              <Text style={styles.featureName}>{topHabit.habit.name}</Text>
-              <Text style={styles.cardHint}>{topHabit.total} total logged</Text>
+              <Text style={[styles.featureName, { color: colors.text }]}>
+                {topHabit.habit.name}
+              </Text>
+              <Text style={[styles.cardHint, { color: colors.mutedText }]}>
+                {topHabit.total} total logged
+              </Text>
             </>
           ) : (
-            <Text style={styles.emptyText}>No top habit yet.</Text>
+            <Text style={[styles.emptyText, { color: colors.mutedText }]}>No top habit yet.</Text>
           )}
         </SectionCard>
 
-        <Text style={styles.sectionTitle}>Streaks</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Streaks</Text>
         {streakRows.length === 0 ? (
-          <Text style={styles.emptyText}>Create a habit to start tracking streaks.</Text>
+          <Text style={[styles.emptyText, { color: colors.mutedText }]}>
+            Create a habit to start tracking streaks.
+          </Text>
         ) : (
           streakRows.map(({ habit, category, streak }) => {
             const target = targets.find(
@@ -119,12 +129,14 @@ export default function InsightsScreen() {
               <SectionCard key={habit.id}>
                 <View style={styles.streakHeader}>
                   <View style={styles.streakText}>
-                    <Text style={styles.featureName}>{habit.name}</Text>
-                    <Text style={styles.cardHint}>
+                    <Text style={[styles.featureName, { color: colors.text }]}>{habit.name}</Text>
+                    <Text style={[styles.cardHint, { color: colors.mutedText }]}>
                       {category?.name ?? 'No category'} - {streak} day streak
                     </Text>
                   </View>
-                  <Text style={styles.streakBadge}>{streak}</Text>
+                  <Text style={[styles.streakBadge, { color: category?.colour ?? colors.tint }]}>
+                    {streak}
+                  </Text>
                 </View>
                 <ProgressBar progress={target ? progress : streak > 0 ? 1 : 0} colour={category?.colour} />
               </SectionCard>
@@ -138,9 +150,12 @@ export default function InsightsScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
+    alignSelf: 'center',
     backgroundColor: Colors.light.background,
     flex: 1,
+    maxWidth: 780,
     padding: Spacing.xl,
+    width: '100%',
   },
   content: {
     paddingBottom: Spacing.xxl,

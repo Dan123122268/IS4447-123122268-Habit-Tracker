@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function EditHabit() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { categories, habits, targets, refreshData } = useTrackify();
+  const { categories, colors, habits, targets, refreshData } = useTrackify();
   const habitId = Number(id);
   const habit = habits.find((item) => item.id === habitId);
   const weeklyTarget = targets.find(
@@ -77,7 +77,7 @@ export default function EditHabit() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ScreenHeader title="Edit Habit" subtitle={`Update ${habit.name}`} />
 
@@ -90,7 +90,7 @@ export default function EditHabit() {
             onChangeText={setWeeklyTargetValue}
           />
 
-          <Text style={styles.sectionLabel}>Category</Text>
+          <Text style={[styles.sectionLabel, { color: colors.mutedText }]}>Category</Text>
           <View style={styles.categoryGrid}>
             {categories.map((category) => {
               const isSelected = categoryId === category.id;
@@ -103,6 +103,10 @@ export default function EditHabit() {
                   onPress={() => setCategoryId(category.id)}
                   style={[
                     styles.categoryButton,
+                    {
+                      backgroundColor: colors.surfaceStrong,
+                      borderColor: colors.border,
+                    },
                     isSelected && {
                       backgroundColor: category.colour,
                       borderColor: category.colour,
@@ -112,6 +116,7 @@ export default function EditHabit() {
                   <Text
                     style={[
                       styles.categoryButtonText,
+                      { color: colors.text },
                       isSelected && styles.categoryButtonTextSelected,
                     ]}
                   >
@@ -136,9 +141,12 @@ export default function EditHabit() {
 
 const styles = StyleSheet.create({
   safeArea: {
+    alignSelf: 'center',
     backgroundColor: Colors.light.background,
     flex: 1,
+    maxWidth: 780,
     padding: Spacing.xl,
+    width: '100%',
   },
   content: {
     paddingBottom: Spacing.xxl,
@@ -147,7 +155,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   sectionLabel: {
-    color: Colors.light.mutedText,
     fontSize: 13,
     fontWeight: '700',
     marginBottom: Spacing.sm,
@@ -159,15 +166,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   categoryButton: {
-    backgroundColor: Colors.light.surface,
-    borderColor: Colors.light.border,
     borderRadius: Radius.pill,
     borderWidth: 1,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
   },
   categoryButtonText: {
-    color: Colors.light.text,
     fontWeight: '600',
   },
   categoryButtonTextSelected: {

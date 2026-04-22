@@ -1,7 +1,7 @@
 import ChoiceChip from '@/components/ui/choice-chip';
 import { Spacing } from '@/constants/theme';
 import { DateRangeFilter as DateRangeFilterValue, dateRangeOptions } from '@/utils/filters';
-import { ScrollView, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 type Props = {
   value: DateRangeFilterValue;
@@ -10,11 +10,7 @@ type Props = {
 
 export default function DateRangeFilter({ value, onChange }: Props) {
   return (
-    <ScrollView
-      horizontal
-      contentContainerStyle={styles.row}
-      showsHorizontalScrollIndicator={false}
-    >
+    <View style={styles.row}>
       {dateRangeOptions.map((option) => (
         <ChoiceChip
           key={option.value}
@@ -23,13 +19,16 @@ export default function DateRangeFilter({ value, onChange }: Props) {
           onPress={() => onChange(option.value)}
         />
       ))}
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   row: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.sm,
+    minHeight: 44,
     paddingTop: Spacing.md,
   },
 });

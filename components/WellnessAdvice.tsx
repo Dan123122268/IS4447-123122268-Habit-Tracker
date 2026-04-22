@@ -1,17 +1,42 @@
 import PrimaryButton from '@/components/ui/primary-button';
 import SectionCard from '@/components/ui/section-card';
 import { Colors, Spacing } from '@/constants/theme';
+import { useThemeColors } from '@/context/ThemeContext';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 type AdviceResponse = {
-  slip?: {
-    id: number;
-    advice: string;
-  };
+  text?: string;
+};
+
+const fallbackPrompts = [
+  'Take two minutes to log one honest habit entry and notice what helped or got in the way.',
+  'Pick one habit for today and make the next action small enough that you can start immediately.',
+  'Check your weekly target and write one sentence about what would make tomorrow easier.',
+  'Pause, breathe, and choose one routine that supports your energy rather than just your streak.',
+];
+
+const wellnessFrames = [
+  'Reflection prompt',
+  'Mindful habit nudge',
+  'Consistency check',
+  'Wellbeing reset',
+];
+
+const buildWellnessPrompt = (seedText?: string) => {
+  if (!seedText) return fallbackPrompts[0];
+
+  const seed = seedText
+    .split('')
+    .reduce((total, character) => total + character.charCodeAt(0), 0);
+  const prompt = fallbackPrompts[seed % fallbackPrompts.length];
+  const frame = wellnessFrames[seed % wellnessFrames.length];
+
+  return `${frame}: ${prompt}`;
 };
 
 export default function WellnessAdvice() {
+  const colors = useThemeColors();
   const [advice, setAdvice] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,22 +46,23 @@ export default function WellnessAdvice() {
     setError('');
 
     try {
-      const response = await fetch('https://api.adviceslip.com/advice');
+      const response = await fetch('https://uselessfacts.jsph.pl/api/v2/facts/random?language=en');
 
       if (!response.ok) {
         throw new Error('Advice service is unavailable.');
       }
 
       const data = (await response.json()) as AdviceResponse;
-      const nextAdvice = data.slip?.advice;
+      const nextAdvice = data.text;
 
       if (!nextAdvice) {
         throw new Error('Advice response was empty.');
       }
 
-      setAdvice(nextAdvice);
-    } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : 'Unable to load advice.');
+      setAdvice(buildWellnessPrompt(nextAdvice));
+    } catch {
+      setAdvice(buildWellnessPrompt());
+      setError('Showing offline wellness prompt.');
     } finally {
       setIsLoading(false);
     }
@@ -48,15 +74,20 @@ export default function WellnessAdvice() {
 
   return (
     <SectionCard>
-      <Text style={styles.title}>Wellness prompt</Text>
-      <Text style={styles.caption}>Fetched from a public advice API.</Text>
+      <Text style={[styles.title, { color: colors.text }]}>Wellness prompt</Text>
+      <Text style={[styles.caption, { color: colors.mutedText }]}>
+        Generated from a public API signal with offline fallback.
+      </Text>
 
       {isLoading ? (
-        <Text style={styles.body}>Loading advice...</Text>
+        <Text style={[styles.body, { color: colors.text }]}>Loading advice...</Text>
       ) : error ? (
-        <Text style={styles.error}>{error}</Text>
+        <>
+          <Text style={[styles.body, { color: colors.text }]}>{advice}</Text>
+          <Text style={styles.notice}>{error}</Text>
+        </>
       ) : (
-        <Text style={styles.body}>{advice}</Text>
+        <Text style={[styles.body, { color: colors.text }]}>{advice}</Text>
       )}
 
       <View style={styles.buttonSpacing}>
@@ -68,23 +99,21 @@ export default function WellnessAdvice() {
 
 const styles = StyleSheet.create({
   title: {
-    color: Colors.light.text,
     fontSize: 18,
     fontWeight: '800',
   },
   caption: {
-    color: Colors.light.mutedText,
     fontSize: 13,
     marginTop: 2,
   },
   body: {
-    color: Colors.light.text,
     fontSize: 16,
     lineHeight: 23,
     marginTop: Spacing.md,
   },
-  error: {
-    color: Colors.light.danger,
+  notice: {
+    color: Colors.light.warning,
+    fontSize: 12,
     fontWeight: '700',
     marginTop: Spacing.md,
   },
@@ -92,3 +121,4 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
 });
+

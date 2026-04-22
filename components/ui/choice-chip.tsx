@@ -1,4 +1,5 @@
-import { Colors, Radius, Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
+import { useThemeColors } from '@/context/ThemeContext';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 type Props = {
@@ -9,7 +10,8 @@ type Props = {
 };
 
 export default function ChoiceChip({ label, selected, onPress, colour }: Props) {
-  const selectedColour = colour ?? Colors.light.text;
+  const colors = useThemeColors();
+  const selectedColour = colour ?? colors.tint;
 
   return (
     <Pressable
@@ -18,32 +20,33 @@ export default function ChoiceChip({ label, selected, onPress, colour }: Props) 
       onPress={onPress}
       style={[
         styles.chip,
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+        },
         selected && {
           backgroundColor: selectedColour,
           borderColor: selectedColour,
         },
       ]}
     >
-      <Text style={[styles.label, selected && styles.selectedLabel]}>{label}</Text>
+      <Text style={[styles.label, { color: selected ? '#FFFFFF' : colors.text }]}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   chip: {
-    backgroundColor: Colors.light.surface,
-    borderColor: Colors.light.border,
     borderRadius: Radius.pill,
     borderWidth: 1,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
   },
   label: {
-    color: Colors.light.text,
     fontSize: 14,
     fontWeight: '600',
   },
-  selectedLabel: {
-    color: Colors.light.surface,
-  },
 });
+

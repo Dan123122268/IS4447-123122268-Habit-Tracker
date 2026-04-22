@@ -1,4 +1,5 @@
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useThemeColors } from '@/context/ThemeContext';
 import { ChartPoint } from '@/utils/insights';
 import { DimensionValue, StyleSheet, Text, View } from 'react-native';
 
@@ -7,6 +8,7 @@ type Props = {
 };
 
 export default function SimpleBarChart({ data }: Props) {
+  const colors = useThemeColors();
   const maxValue = Math.max(...data.map((item) => item.value), 1);
 
   return (
@@ -19,11 +21,11 @@ export default function SimpleBarChart({ data }: Props) {
 
         return (
           <View key={item.label} style={styles.barGroup}>
-            <View style={styles.barTrack}>
-              <View style={[styles.bar, { height }]} />
+            <View style={[styles.barTrack, { backgroundColor: colors.surfaceStrong }]}>
+              <View style={[styles.bar, { backgroundColor: colors.tint, height }]} />
             </View>
-            <Text style={styles.value}>{item.value}</Text>
-            <Text style={styles.label} numberOfLines={1}>
+            <Text style={[styles.value, { color: colors.text }]}>{item.value}</Text>
+            <Text style={[styles.label, { color: colors.mutedText }]} numberOfLines={1}>
               {item.label}
             </Text>
           </View>
@@ -50,7 +52,6 @@ const styles = StyleSheet.create({
   },
   barTrack: {
     alignItems: 'center',
-    backgroundColor: '#E2E8F0',
     borderRadius: Radius.pill,
     flex: 1,
     justifyContent: 'flex-end',
@@ -58,7 +59,6 @@ const styles = StyleSheet.create({
     width: 18,
   },
   bar: {
-    backgroundColor: Colors.light.tint,
     borderRadius: Radius.pill,
     width: '100%',
   },
@@ -69,9 +69,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   label: {
-    color: Colors.light.mutedText,
     fontSize: 10,
     marginTop: 2,
     maxWidth: 46,
   },
 });
+

@@ -1,4 +1,5 @@
-import { Colors, Radius, Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
+import { useThemeColors } from '@/context/ThemeContext';
 import { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -7,16 +8,30 @@ type Props = {
 };
 
 export default function SectionCard({ children }: Props) {
-  return <View style={styles.card}>{children}</View>;
+  const colors = useThemeColors();
+
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+        },
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.light.surface,
-    borderColor: '#E2E8F0',
     borderRadius: Radius.lg,
     borderWidth: 1,
     marginBottom: Spacing.md,
     padding: Spacing.lg,
+    elevation: 2,
   },
 });
+

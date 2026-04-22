@@ -2,6 +2,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useState 
 import { useColorScheme } from 'react-native';
 import { and, eq } from 'drizzle-orm';
 import { Colors, ThemeMode, ThemeName } from '@/constants/theme';
+import { ThemeColorsProvider } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import {
   categories as categoriesTable,
@@ -48,9 +49,9 @@ type Props = {
 };
 
 const defaultCategoryTemplates = [
-  { name: 'Fitness', colour: '#0F766E', icon: 'activity' },
-  { name: 'Learning', colour: '#2563EB', icon: 'book' },
-  { name: 'Wellbeing', colour: '#C2410C', icon: 'heart' },
+  { name: 'Fitness', colour: '#0F766E', icon: 'fitness-outline' },
+  { name: 'Learning', colour: '#2563EB', icon: 'book-outline' },
+  { name: 'Wellbeing', colour: '#C2410C', icon: 'heart-outline' },
 ];
 
 export function TrackifyProvider({ children }: Props) {
@@ -300,7 +301,7 @@ export function TrackifyProvider({ children }: Props) {
         deleteProfile,
       }}
     >
-      {children}
+      <ThemeColorsProvider colors={colors}>{children}</ThemeColorsProvider>
     </TrackifyContext.Provider>
   );
 }
@@ -313,4 +314,8 @@ export function useTrackify() {
   }
 
   return context;
+}
+
+export function useOptionalTrackify() {
+  return useContext(TrackifyContext);
 }

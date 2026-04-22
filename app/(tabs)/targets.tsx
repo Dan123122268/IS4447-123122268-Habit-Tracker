@@ -19,7 +19,7 @@ type Scope = 'habit' | 'category';
 type Period = 'weekly' | 'monthly';
 
 export default function TargetsScreen() {
-  const { activeUser, categories, habits, logs, targets, refreshData } = useTrackify();
+  const { activeUser, categories, colors, habits, logs, targets, refreshData } = useTrackify();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [scope, setScope] = useState<Scope>('habit');
   const [period, setPeriod] = useState<Period>('weekly');
@@ -119,7 +119,7 @@ export default function TargetsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ScreenHeader
           title="Targets"
@@ -127,11 +127,11 @@ export default function TargetsScreen() {
         />
 
         <SectionCard>
-          <Text style={styles.cardTitle}>
+          <Text style={[styles.cardTitle, { color: colors.text }]}>
             {editingId === null ? 'New target' : `Editing ${getTargetLabel(editingTarget!)}`}
           </Text>
 
-          <Text style={styles.sectionLabel}>Scope</Text>
+          <Text style={[styles.sectionLabel, { color: colors.mutedText }]}>Scope</Text>
           <View style={styles.chipRow}>
             <ChoiceChip
               label="Habit"
@@ -145,7 +145,9 @@ export default function TargetsScreen() {
             />
           </View>
 
-          <Text style={styles.sectionLabel}>{scope === 'habit' ? 'Habit' : 'Category'}</Text>
+          <Text style={[styles.sectionLabel, { color: colors.mutedText }]}>
+            {scope === 'habit' ? 'Habit' : 'Category'}
+          </Text>
           <View style={styles.chipRow}>
             {scopeOptions.map((option) => (
               <ChoiceChip
@@ -158,7 +160,7 @@ export default function TargetsScreen() {
             ))}
           </View>
 
-          <Text style={styles.sectionLabel}>Period</Text>
+          <Text style={[styles.sectionLabel, { color: colors.mutedText }]}>Period</Text>
           <View style={styles.chipRow}>
             <ChoiceChip
               label="Weekly"
@@ -192,9 +194,9 @@ export default function TargetsScreen() {
           ) : null}
         </SectionCard>
 
-        <Text style={styles.sectionTitle}>Active targets</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Active targets</Text>
         {targets.length === 0 ? (
-          <Text style={styles.emptyText}>No targets yet.</Text>
+          <Text style={[styles.emptyText, { color: colors.mutedText }]}>No targets yet.</Text>
         ) : (
           targets.map((target) => {
             const total = totalForPeriod(getTargetHabitIds(target), logs, target.period);
@@ -205,9 +207,11 @@ export default function TargetsScreen() {
               <SectionCard key={target.id}>
                 <View style={styles.targetHeader}>
                   <View style={styles.targetText}>
-                    <Text style={styles.targetName}>{getTargetLabel(target)}</Text>
-                    <Text style={styles.targetMeta}>
-                      {target.period} • {total}/{target.targetValue}
+                    <Text style={[styles.targetName, { color: colors.text }]}>
+                      {getTargetLabel(target)}
+                    </Text>
+                    <Text style={[styles.targetMeta, { color: colors.mutedText }]}>
+                      {target.period} - {total}/{target.targetValue}
                     </Text>
                   </View>
                   <PrimaryButton
@@ -218,7 +222,7 @@ export default function TargetsScreen() {
                   />
                 </View>
                 <ProgressBar progress={progress} />
-                <Text style={styles.targetHint}>
+                <Text style={[styles.targetHint, { color: colors.mutedText }]}>
                   {remaining === 0 ? 'Target reached or exceeded' : `${remaining} remaining`}
                 </Text>
               </SectionCard>
@@ -232,9 +236,12 @@ export default function TargetsScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
+    alignSelf: 'center',
     backgroundColor: Colors.light.background,
     flex: 1,
+    maxWidth: 780,
     padding: Spacing.xl,
+    width: '100%',
   },
   content: {
     paddingBottom: Spacing.xxl,
@@ -302,3 +309,4 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
 });
+
