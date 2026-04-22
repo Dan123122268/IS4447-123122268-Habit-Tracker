@@ -8,6 +8,9 @@ import { Platform } from 'react-native';
 const tintColorLight = '#0F766E';
 const tintColorDark = '#5EEAD4';
 
+export type ThemeMode = 'system' | 'light' | 'dark';
+export type ThemeName = 'light' | 'dark';
+
 export const Colors = {
   light: {
     text: '#111827',

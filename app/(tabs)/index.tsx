@@ -1,8 +1,11 @@
+import DateRangeFilter from '@/components/DateRangeFilter';
+import DashboardSummary from '@/components/DashboardSummary';
 import HabitCard from '@/components/HabitCard';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { useTrackify } from '@/context/TrackifyContext';
+import { DateRangeFilter as DateRangeFilterValue, habitHasLogInDateRange } from '@/utils/filters';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -19,6 +22,7 @@ export default function IndexScreen() {
   const { categories, habits, logs, targets, isLoading } = useTrackify();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue>('all');
 
   const activeHabits = habits.filter((habit) => !habit.isArchived);
   const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -34,7 +38,9 @@ export default function IndexScreen() {
     const matchesCategory =
       selectedCategoryId === null || habit.categoryId === selectedCategoryId;
 
-    return matchesSearch && matchesCategory;
+    const matchesDateRange = habitHasLogInDateRange(habit, logs, dateRange);
+
+    return matchesSearch && matchesCategory && matchesDateRange;
   });
 
   return (
@@ -48,6 +54,8 @@ export default function IndexScreen() {
         label="Add Habit"
         onPress={() => router.push({ pathname: '/add' })}
       />
+
+      <DashboardSummary habits={activeHabits} logs={logs} />
 
       <TextInput
         accessibilityLabel="Search habits"
@@ -108,6 +116,8 @@ export default function IndexScreen() {
         })}
       </ScrollView>
 
+      <DateRangeFilter value={dateRange} onChange={setDateRange} />
+
       <ScrollView
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
@@ -115,7 +125,9 @@ export default function IndexScreen() {
         {isLoading ? (
           <Text style={styles.emptyText}>Loading habits...</Text>
         ) : filteredHabits.length === 0 ? (
-          <Text style={styles.emptyText}>No habits match your filters</Text>
+          <Text style={styles.emptyText}>
+            No habits match your search, category, and date filters
+          </Text>
         ) : (
           filteredHabits.map((habit) => (
             <HabitCard

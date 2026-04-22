@@ -1,4 +1,5 @@
 import SimpleBarChart from '@/components/SimpleBarChart';
+import WellnessAdvice from '@/components/WellnessAdvice';
 import ChoiceChip from '@/components/ui/choice-chip';
 import ProgressBar from '@/components/ui/progress-bar';
 import ScreenHeader from '@/components/ui/screen-header';
@@ -47,6 +48,8 @@ export default function InsightsScreen() {
           title="Insights"
           subtitle="Summaries and charts from stored habit logs."
         />
+
+        <WellnessAdvice />
 
         <View style={styles.summaryGrid}>
           <SectionCard>
@@ -118,7 +121,7 @@ export default function InsightsScreen() {
                   <View style={styles.streakText}>
                     <Text style={styles.featureName}>{habit.name}</Text>
                     <Text style={styles.cardHint}>
-                      {category?.name ?? 'No category'} • {streak} day streak
+                      {category?.name ?? 'No category'} - {streak} day streak
                     </Text>
                   </View>
                   <Text style={styles.streakBadge}>{streak}</Text>

@@ -12,6 +12,10 @@ It uses local SQLite persistence through Drizzle ORM.
 - Insights screen with daily, weekly, and monthly chart views
 - Streak and top-habit summaries from stored logs
 - Local account flow with register, login, logout, and delete profile
+- Persisted light/dark/system theme preference
+- CSV export for locally stored habit logs
+- Local daily notification reminders
+- Public advice API integration with loading and error states
 - Seed data for all core tables
 - Reusable UI components for forms, buttons, headers, tags, cards, and progress bars
 - Jest tests for seeding, reusable form input, and seeded habit list rendering
@@ -29,10 +33,8 @@ It uses local SQLite persistence through Drizzle ORM.
    - Streak calculation from completed logs
 
 3. Advanced features
-   - Light/dark mode toggle with persisted setting
-   - CSV export of habit logs
-   - Local reminders for habit logging
-   - Optional public API integration
+   - Polish app branding and icon assets
+   - Expand theme styling across every screen surface
 
 4. Delivery polish
    - App icon/branding update

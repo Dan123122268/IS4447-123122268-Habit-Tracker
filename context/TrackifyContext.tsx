@@ -1,5 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { useColorScheme } from 'react-native';
 import { and, eq } from 'drizzle-orm';
+import { Colors, ThemeMode, ThemeName } from '@/constants/theme';
 import { db } from '@/db/client';
 import {
   categories as categoriesTable,
@@ -27,6 +29,11 @@ type TrackifyContextType = {
   settings: Setting[];
   activeUser: User | null;
   isLoading: boolean;
+  themeMode: ThemeMode;
+  themeName: ThemeName;
+  colors: typeof Colors.light;
+  setThemeMode: (mode: ThemeMode) => Promise<void>;
+  setUserSetting: (key: string, value: string | null) => Promise<void>;
   refreshData: () => Promise<void>;
   login: (username: string, password: string) => Promise<AuthResult>;
   register: (username: string, password: string) => Promise<AuthResult>;
@@ -47,6 +54,7 @@ const defaultCategoryTemplates = [
 ];
 
 export function TrackifyProvider({ children }: Props) {
+  const systemScheme = useColorScheme();
   const [categories, setCategories] = useState<Category[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
   const [logs, setLogs] = useState<HabitLog[]>([]);
@@ -54,6 +62,12 @@ export function TrackifyProvider({ children }: Props) {
   const [settings, setSettings] = useState<Setting[]>([]);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const themeMode =
+    (settings.find((setting) => setting.key === 'theme')?.value as ThemeMode | undefined) ??
+    'system';
+  const themeName: ThemeName =
+    themeMode === 'system' ? (systemScheme === 'dark' ? 'dark' : 'light') : themeMode;
+  const colors = Colors[themeName];
 
   const setActiveSession = async (userId: number) => {
     await db.delete(settingsTable).where(eq(settingsTable.key, 'active_user_id'));
@@ -215,6 +229,44 @@ export function TrackifyProvider({ children }: Props) {
     await refreshData();
   }, [activeUser, refreshData]);
 
+  const setThemeMode = useCallback(
+    async (mode: ThemeMode) => {
+      if (!activeUser) return;
+
+      await db
+        .delete(settingsTable)
+        .where(and(eq(settingsTable.userId, activeUser.id), eq(settingsTable.key, 'theme')));
+      await db.insert(settingsTable).values({
+        userId: activeUser.id,
+        key: 'theme',
+        value: mode,
+      });
+      await refreshData();
+    },
+    [activeUser, refreshData]
+  );
+
+  const setUserSetting = useCallback(
+    async (key: string, value: string | null) => {
+      if (!activeUser) return;
+
+      await db
+        .delete(settingsTable)
+        .where(and(eq(settingsTable.userId, activeUser.id), eq(settingsTable.key, key)));
+
+      if (value !== null) {
+        await db.insert(settingsTable).values({
+          userId: activeUser.id,
+          key,
+          value,
+        });
+      }
+
+      await refreshData();
+    },
+    [activeUser, refreshData]
+  );
+
   useEffect(() => {
     const loadTrackify = async () => {
       setIsLoading(true);
@@ -236,6 +288,11 @@ export function TrackifyProvider({ children }: Props) {
         settings,
         activeUser,
         isLoading,
+        themeMode,
+        themeName,
+        colors,
+        setThemeMode,
+        setUserSetting,
         refreshData,
         login,
         register,

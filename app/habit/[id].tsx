@@ -1,11 +1,14 @@
+import HabitLogForm from '@/components/HabitLogForm';
+import HabitLogList from '@/components/HabitLogList';
 import InfoTag from '@/components/ui/info-tag';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
-import { Colors, Radius, Spacing } from '@/constants/theme';
+import SectionCard from '@/components/ui/section-card';
+import { Colors, Spacing } from '@/constants/theme';
 import { useTrackify } from '@/context/TrackifyContext';
 import { db } from '@/db/client';
 import { habitLogs as habitLogsTable, habits as habitsTable } from '@/db/schema';
-import { formatDateLabel, todayIso, totalForCurrentWeek } from '@/utils/date';
+import { todayIso, totalForCurrentWeek } from '@/utils/date';
 import { eq } from 'drizzle-orm';
 import { Href, useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -23,8 +26,7 @@ export default function HabitDetail() {
   const category = categories.find((item) => item.id === habit.categoryId);
   const habitLogs = logs
     .filter((log) => log.habitId === habit.id)
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, 5);
+    .sort((a, b) => b.date.localeCompare(a.date));
   const weeklyTarget = targets.find(
     (target) => target.habitId === habit.id && target.period === 'weekly'
   );
@@ -36,15 +38,30 @@ export default function HabitDetail() {
   const logToday = async () => {
     if (!activeUser) return;
 
+    await saveLog({
+      date: todayIso(),
+      value: 1,
+      notes: null,
+    });
+  };
+
+  const saveLog = async (input: { date: string; value: number; notes: string | null }) => {
+    if (!activeUser) return;
+
     await db.insert(habitLogsTable).values({
       habitId: habit.id,
       userId: activeUser.id,
-      date: todayIso(),
-      value: 1,
+      date: input.date,
+      value: input.value,
       completed: true,
-      notes: null,
+      notes: input.notes,
     });
 
+    await refreshData();
+  };
+
+  const deleteLog = async (logId: number) => {
+    await db.delete(habitLogsTable).where(eq(habitLogsTable.id, logId));
     await refreshData();
   };
 
@@ -64,7 +81,7 @@ export default function HabitDetail() {
           <InfoTag label="Metric" value={habit.metricType} />
         </View>
 
-        <View style={styles.summaryCard}>
+        <SectionCard>
           <Text style={styles.summaryLabel}>Weekly progress</Text>
           <Text style={styles.summaryValue}>
             {weeklyTarget ? `${weeklyTotal}/${weeklyTarget.targetValue}` : weeklyTotal}
@@ -76,7 +93,7 @@ export default function HabitDetail() {
                 : `${remaining} remaining this week`
               : 'No weekly target set yet'}
           </Text>
-        </View>
+        </SectionCard>
 
         {habit.notes ? <Text style={styles.notes}>{habit.notes}</Text> : null}
 
@@ -94,19 +111,11 @@ export default function HabitDetail() {
           />
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent logs</Text>
-          {habitLogs.length === 0 ? (
-            <Text style={styles.emptyText}>No logs yet. Log today to start your streak.</Text>
-          ) : (
-            habitLogs.map((log) => (
-              <View key={log.id} style={styles.logRow}>
-                <Text style={styles.logDate}>{formatDateLabel(log.date)}</Text>
-                <Text style={styles.logValue}>{log.value}</Text>
-              </View>
-            ))
-          )}
+        <View style={styles.formSpacing}>
+          <HabitLogForm onSave={saveLog} />
         </View>
+
+        <HabitLogList logs={habitLogs} onDelete={deleteLog} />
 
         <View style={styles.buttonSpacing}>
           <PrimaryButton label="Delete Habit" variant="danger" onPress={deleteHabit} />
@@ -129,14 +138,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: Spacing.lg,
-  },
-  summaryCard: {
-    backgroundColor: Colors.light.surface,
-    borderColor: '#E2E8F0',
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    marginBottom: Spacing.lg,
-    padding: Spacing.lg,
   },
   summaryLabel: {
     color: Colors.light.mutedText,
@@ -162,33 +163,7 @@ const styles = StyleSheet.create({
   buttonSpacing: {
     marginTop: Spacing.sm,
   },
-  section: {
+  formSpacing: {
     marginTop: Spacing.xxl,
-  },
-  sectionTitle: {
-    color: Colors.light.text,
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: Spacing.md,
-  },
-  emptyText: {
-    color: Colors.light.mutedText,
-  },
-  logRow: {
-    alignItems: 'center',
-    backgroundColor: Colors.light.surface,
-    borderRadius: Radius.md,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.sm,
-    padding: Spacing.md,
-  },
-  logDate: {
-    color: Colors.light.text,
-    fontWeight: '600',
-  },
-  logValue: {
-    color: Colors.light.tint,
-    fontWeight: '800',
   },
 });
