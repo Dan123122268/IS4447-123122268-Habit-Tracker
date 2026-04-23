@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   content: {
-    paddingBottom: Spacing.xxl,
+    paddingBottom: Spacing.screenBottom,
   },
   username: {
     color: Colors.light.text,

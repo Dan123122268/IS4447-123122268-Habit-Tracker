@@ -6,7 +6,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 type AdviceResponse = {
-  text?: string;
+  q?: string;
+  a?: string;
 };
 
 const fallbackPrompts = [
@@ -23,7 +24,7 @@ const wellnessFrames = [
   'Wellbeing reset',
 ];
 
-const buildWellnessPrompt = (seedText?: string) => {
+const buildWellnessPrompt = (seedText?: string, author?: string) => {
   if (!seedText) return fallbackPrompts[0];
 
   const seed = seedText
@@ -31,8 +32,9 @@ const buildWellnessPrompt = (seedText?: string) => {
     .reduce((total, character) => total + character.charCodeAt(0), 0);
   const prompt = fallbackPrompts[seed % fallbackPrompts.length];
   const frame = wellnessFrames[seed % wellnessFrames.length];
+  const quoteSource = author ? ` (${author})` : '';
 
-  return `${frame}: ${prompt}`;
+  return `${frame}: "${seedText}"${quoteSource}. ${prompt}`;
 };
 
 export default function WellnessAdvice() {
@@ -46,20 +48,20 @@ export default function WellnessAdvice() {
     setError('');
 
     try {
-      const response = await fetch('https://uselessfacts.jsph.pl/api/v2/facts/random?language=en');
+      const response = await fetch('https://zenquotes.io/api/random');
 
       if (!response.ok) {
         throw new Error('Advice service is unavailable.');
       }
 
-      const data = (await response.json()) as AdviceResponse;
-      const nextAdvice = data.text;
+      const data = (await response.json()) as AdviceResponse[];
+      const nextAdvice = data[0]?.q;
 
       if (!nextAdvice) {
         throw new Error('Advice response was empty.');
       }
 
-      setAdvice(buildWellnessPrompt(nextAdvice));
+      setAdvice(buildWellnessPrompt(nextAdvice, data[0]?.a));
     } catch {
       setAdvice(buildWellnessPrompt());
       setError('Showing offline wellness prompt.');

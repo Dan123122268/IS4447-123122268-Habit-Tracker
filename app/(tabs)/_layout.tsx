@@ -1,9 +1,12 @@
 import { useTrackify } from '@/context/TrackifyContext';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
   const { colors } = useTrackify();
+  const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, 18);
 
   return (
     <Tabs
@@ -21,8 +24,8 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
-          height: 64,
-          paddingBottom: 8,
+          height: 66 + bottomInset,
+          paddingBottom: bottomInset,
           paddingTop: 6,
         },
       }}

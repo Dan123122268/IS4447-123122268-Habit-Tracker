@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   content: {
-    paddingBottom: Spacing.xxl,
+    paddingBottom: Spacing.screenBottom,
   },
   tags: {
     flexDirection: 'row',

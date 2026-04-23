@@ -1,53 +1,93 @@
 # Trackify
 
-Trackify is a React Native and Expo habit tracker for IS4447 student `123122268`.
-It uses local SQLite persistence through Drizzle ORM.
+Trackify is a React Native and Expo habit tracker developed for IS4447 student `123122268`.
+It uses local SQLite persistence through Drizzle ORM and focuses on habit creation, logging,
+targets, insights, and mobile-friendly offline use.
 
-## Current State
+## Project Summary
 
-- Habit list/dashboard with search and category filtering
-- Add, edit, delete, and log habits
-- Categories, habits, logs, targets, users, and settings schema
-- Category and target management screens
-- Insights screen with daily, weekly, and monthly chart views
-- Streak and top-habit summaries from stored logs
-- Local account flow with register, login, logout, and delete profile
-- Persisted light/dark/system theme preference
-- CSV export for locally stored habit logs
-- Local daily notification reminders
-- Public advice API integration with loading and error states
-- Seed data for all core tables
-- Reusable UI components for forms, buttons, headers, tags, cards, and progress bars
-- Jest tests for seeding, reusable form input, and seeded habit list rendering
+Trackify supports:
 
-## Roadmap
+- local register, login, logout, and profile deletion
+- habit CRUD with category assignment and optional notes
+- habit activity logs with date, measurable count, and completion state
+- category management with named colours and icons
+- weekly and monthly targets for habits or categories
+- daily, weekly, and monthly insights with a bar chart
+- streak tracking and summary cards derived from stored logs
+- search and category filtering on the habit list
+- persisted light, dark, and system theme preference
+- local notification reminders
+- CSV export of stored habit logs
+- seed data for all core tables
+- Jest tests for seed logic, reusable form input, and seeded habit rendering
 
-1. Categories and targets
-   - Create and edit categories with colours/icons
-   - Define weekly/monthly targets per habit or category
-   - Show progress and remaining amounts
+All data is stored locally using SQLite via Drizzle ORM.
 
-2. Insights and charts
-   - Daily, weekly, and monthly summaries
-   - Simple bar or pie chart from stored habit logs
-   - Streak calculation from completed logs
+## Technology
 
-3. Advanced features
-   - Polish app branding and icon assets
-   - Expand theme styling across every screen surface
+- React Native
+- Expo
+- Expo Router
+- SQLite
+- Drizzle ORM
+- Jest
+- React Native Testing Library
 
-4. Delivery polish
-   - App icon/branding update
-   - Expo publish link
-   - Demo-video checklist
-   - Short report notes for accessibility, architecture, and AI usage
+## Project Structure
 
-## Development
+- `app/` screen routes and navigation
+- `components/` reusable UI and feature components
+- `context/` application state and theme providers
+- `db/` database client, schema, and seed logic
+- `utils/` filtering, insights, auth, export, date, and reminders helpers
+- `tests/` unit, component, and integration tests
+
+## Setup
+
+This project is editor-agnostic and can be opened in VS Code, Cursor, PyCharm, or another IDE.
+The important part is having Node.js, npm, and a terminal available.
+
+Recommended runtime:
+
+- Node.js 22 LTS
+
+Install dependencies:
 
 ```bash
 npm install
-npm test
-npm run lint
-npx tsc --noEmit
+```
+
+Run the project:
+
+```bash
 npx expo start
 ```
+
+Useful commands:
+
+```bash
+npm test -- --runInBand
+npm run lint
+npx tsc --noEmit
+```
+
+## Testing
+
+The project includes:
+
+- a unit test for the seed function
+- a component test for the reusable `FormField`
+- an integration test for the seeded habit list screen
+- additional utility tests for filters, insights, export, and auth helpers
+
+## Data Privacy
+
+Trackify is local-only by default. User records are stored on-device using SQLite.
+No remote database or secret key is required for the core experience.
+
+## Repository
+
+GitHub repository:
+
+`https://github.com/Dan123122268/IS4447-123122268-Habit-Tracker`

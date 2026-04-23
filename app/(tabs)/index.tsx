@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   listContent: {
-    paddingBottom: Spacing.xxl,
+    paddingBottom: Spacing.screenBottom,
     paddingTop: Spacing.lg,
   },
   searchInput: {

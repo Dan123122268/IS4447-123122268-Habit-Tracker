@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: Spacing.xxl,
+    paddingBottom: Spacing.screenBottom,
   },
   inner: {
     alignSelf: 'center',
