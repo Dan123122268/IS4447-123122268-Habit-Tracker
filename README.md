@@ -4,6 +4,28 @@ Trackify is a React Native and Expo habit tracker developed for IS4447 student `
 It uses local SQLite persistence through Drizzle ORM and focuses on habit creation, logging,
 targets, insights, and mobile-friendly offline use.
 
+## Submission Links
+
+GitHub repository:
+
+`https://github.com/Dan123122268/IS4447-123122268-Habit-Tracker`
+
+Expo update details page:
+
+`https://expo.dev/preview/update?message=Final+submission&updateRuntimeVersion=1.0.0&createdAt=2026-04-23T18%3A12%3A13.955Z&slug=exp&projectId=636f2a8d-67eb-4c14-9e2b-b346b07d5190&group=f89821dc-292f-4c37-bad1-e70d7038324d`
+
+Expo update deep link:
+
+`exp://u.expo.dev/636f2a8d-67eb-4c14-9e2b-b346b07d5190/group/f89821dc-292f-4c37-bad1-e70d7038324d`
+
+Expo QR code URL:
+
+`https://qr.expo.dev/eas-update?slug=exp&projectId=636f2a8d-67eb-4c14-9e2b-b346b07d5190&groupId=f89821dc-292f-4c37-bad1-e70d7038324d&host=u.expo.dev`
+
+App option:
+
+`Option A - Habit Tracker`
+
 ## Project Summary
 
 Trackify supports:
@@ -85,12 +107,6 @@ The project includes:
 
 Trackify is local-only by default. User records are stored on-device using SQLite.
 No remote database or secret key is required for the core experience.
-
-## Repository
-
-GitHub repository:
-
-`https://github.com/Dan123122268/IS4447-123122268-Habit-Tracker`
 
 ## Expo Update Preview
 
