@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "updates": {
-      "enabled": false
+      "enabled": false,
+      "url": "https://u.expo.dev/636f2a8d-67eb-4c14-9e2b-b346b07d5190"
     },
     "ios": {
       "supportsTablet": true
@@ -49,7 +50,14 @@
       "reactCompiler": true
     },
     "extra": {
-      "router": {}
+      "router": {},
+      "eas": {
+        "projectId": "636f2a8d-67eb-4c14-9e2b-b346b07d5190"
+      }
+    },
+    "owner": "dan222003",
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

@@ -91,3 +91,23 @@ No remote database or secret key is required for the core experience.
 GitHub repository:
 
 `https://github.com/Dan123122268/IS4447-123122268-Habit-Tracker`
+
+## Expo Update Preview
+
+Published update:
+
+- Published: April 23, 2026
+- Runtime version: `1.0.0`
+- Expo project: `@dan222003/trackify-123122268`
+
+Update details page:
+
+`https://expo.dev/preview/update?message=Final+submission&updateRuntimeVersion=1.0.0&createdAt=2026-04-23T18%3A12%3A13.955Z&slug=exp&projectId=636f2a8d-67eb-4c14-9e2b-b346b07d5190&group=f89821dc-292f-4c37-bad1-e70d7038324d`
+
+Update deep link:
+
+`exp://u.expo.dev/636f2a8d-67eb-4c14-9e2b-b346b07d5190/group/f89821dc-292f-4c37-bad1-e70d7038324d`
+
+QR code URL:
+
+`https://qr.expo.dev/eas-update?slug=exp&projectId=636f2a8d-67eb-4c14-9e2b-b346b07d5190&groupId=f89821dc-292f-4c37-bad1-e70d7038324d&host=u.expo.dev`
